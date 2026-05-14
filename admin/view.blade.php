@@ -106,7 +106,14 @@
                             </div>
                         @endif
                         <input type="file" name="og_image" accept="image/*" id="inp-og-file" onchange="previewUpload(this, 'preview-og')">
-                        <p class="help-block">Recommended: 1200×630px. Shown when your panel link is shared on Discord, Twitter, Facebook, etc.</p>
+                        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                            <span class="text-muted" style="font-size:12px;">or paste URL:</span>
+                            <input type="text" name="og_image_url" class="form-control input-sm" id="inp-og-url"
+                                   value="{{ str_starts_with($settings['og_image'] ?? '', 'http') ? $settings['og_image'] : '' }}"
+                                   placeholder="https://example.com/image.png"
+                                   oninput="updatePreview()">
+                        </div>
+                        <p class="help-block">Recommended: 1200x630px. Upload a file or paste an image URL.</p>
                     </div>
 
                     {{-- Favicon --}}
@@ -121,7 +128,13 @@
                             </div>
                         @endif
                         <input type="file" name="favicon" accept="image/*,.ico">
-                        <p class="help-block">Browser tab icon. Recommended: 32×32px or 64×64px .ico/.png file.</p>
+                        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                            <span class="text-muted" style="font-size:12px;">or paste URL:</span>
+                            <input type="text" name="favicon_url" class="form-control input-sm"
+                                   value="{{ str_starts_with($settings['favicon'] ?? '', 'http') ? $settings['favicon'] : '' }}"
+                                   placeholder="https://example.com/favicon.ico">
+                        </div>
+                        <p class="help-block">Browser tab icon. Upload a file or paste an image URL.</p>
                     </div>
                 </div>
             </div>
@@ -163,7 +176,14 @@
                             </div>
                         @endif
                         <input type="file" name="hosting_logo" accept="image/*" id="inp-host-logo-file" onchange="previewUpload(this, 'preview-host-logo')">
-                        <p class="help-block">Your company logo. Appears on the left side of dynamic server share images.</p>
+                        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+                            <span class="text-muted" style="font-size:12px;">or paste URL:</span>
+                            <input type="text" name="hosting_logo_url" class="form-control input-sm"
+                                   value="{{ str_starts_with($settings['hosting_logo'] ?? '', 'http') ? $settings['hosting_logo'] : '' }}"
+                                   placeholder="https://example.com/logo.png"
+                                   oninput="updatePreview()">
+                        </div>
+                        <p class="help-block">Your company logo. Upload a file or paste an image URL.</p>
                     </div>
                 </div>
             </div>

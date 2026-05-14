@@ -31,7 +31,7 @@
         $seoFinalOgImage = '/api/client/extensions/seometa/og-image/' . $seoServerUuid;
     }
 
-    // Build absolute URL for OG image
+    // Build absolute URLs
     if ($seoFinalOgImage && !str_starts_with($seoFinalOgImage, 'http')) {
         $seoFinalOgImage = url($seoFinalOgImage);
     }
@@ -40,94 +40,52 @@
     }
 @endphp
 
-<script>
-(function() {
-    'use strict';
+{{-- Server-rendered meta tags (visible to social crawlers) --}}
+@if($seoDescription)
+<meta name="description" content="{{ $seoDescription }}">
+@endif
+@if($seoThemeColor)
+<meta name="theme-color" content="{{ $seoThemeColor }}">
+@endif
+@if($seoIndexing !== '1')
+<meta name="robots" content="noindex, nofollow">
+@endif
 
-    var head = document.head || document.getElementsByTagName('head')[0];
+{{-- Open Graph --}}
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ $seoCurrentUrl }}">
+@if($seoTitle)
+<meta property="og:title" content="{{ $seoTitle }}">
+@endif
+@if($seoDescription)
+<meta property="og:description" content="{{ $seoDescription }}">
+@endif
+@if($seoFinalOgImage)
+<meta property="og:image" content="{{ $seoFinalOgImage }}">
+@endif
+@if($seoHostName)
+<meta property="og:site_name" content="{{ $seoHostName }}">
+@endif
 
-    function setMeta(property, content, isName) {
-        if (!content) return;
-        var attr = isName ? 'name' : 'property';
-        var existing = document.querySelector('meta[' + attr + '="' + property + '"]');
-        if (existing) {
-            existing.setAttribute('content', content);
-        } else {
-            var meta = document.createElement('meta');
-            meta.setAttribute(attr, property);
-            meta.setAttribute('content', content);
-            head.appendChild(meta);
-        }
-    }
+{{-- Twitter Card --}}
+<meta name="twitter:card" content="{{ $seoCardType }}">
+@if($seoTitle)
+<meta name="twitter:title" content="{{ $seoTitle }}">
+@endif
+@if($seoDescription)
+<meta name="twitter:description" content="{{ $seoDescription }}">
+@endif
+@if($seoFinalOgImage)
+<meta name="twitter:image" content="{{ $seoFinalOgImage }}">
+@endif
 
-    function setLink(rel, href, type) {
-        if (!href) return;
-        var existing = document.querySelector('link[rel="' + rel + '"]');
-        if (existing) {
-            existing.setAttribute('href', href);
-            if (type) existing.setAttribute('type', type);
-        } else {
-            var link = document.createElement('link');
-            link.setAttribute('rel', rel);
-            link.setAttribute('href', href);
-            if (type) link.setAttribute('type', type);
-            head.appendChild(link);
-        }
-    }
+{{-- Favicon --}}
+@if($seoFavicon)
+<link rel="icon" href="{{ $seoFavicon }}">
+<link rel="shortcut icon" href="{{ $seoFavicon }}">
+@endif
 
-    // Page title
-    @if($seoTitle)
-        document.title = @json($seoTitle);
-    @endif
-
-    // Basic meta
-    @if($seoDescription)
-        setMeta('description', @json($seoDescription), true);
-    @endif
-
-    // Open Graph
-    @if($seoTitle)
-        setMeta('og:title', @json($seoTitle));
-    @endif
-    @if($seoDescription)
-        setMeta('og:description', @json($seoDescription));
-    @endif
-    setMeta('og:type', 'website');
-    setMeta('og:url', @json($seoCurrentUrl));
-    @if($seoFinalOgImage)
-        setMeta('og:image', @json($seoFinalOgImage));
-    @endif
-    @if($seoHostName)
-        setMeta('og:site_name', @json($seoHostName));
-    @endif
-
-    // Twitter Card
-    setMeta('twitter:card', @json($seoCardType), true);
-    @if($seoTitle)
-        setMeta('twitter:title', @json($seoTitle), true);
-    @endif
-    @if($seoDescription)
-        setMeta('twitter:description', @json($seoDescription), true);
-    @endif
-    @if($seoFinalOgImage)
-        setMeta('twitter:image', @json($seoFinalOgImage), true);
-    @endif
-
-    // Theme color
-    @if($seoThemeColor)
-        setMeta('theme-color', @json($seoThemeColor), true);
-    @endif
-
-    // Robots (noindex)
-    @if($seoIndexing !== '1')
-        setMeta('robots', 'noindex, nofollow', true);
-    @endif
-
-    // Favicon
-    @if($seoFavicon)
-        setLink('icon', @json($seoFavicon));
-        setLink('shortcut icon', @json($seoFavicon));
-    @endif
-
-})();
-</script>
+{{-- Page title (requires JS since Pterodactyl is a React SPA) --}}
+@if($seoTitle)
+<script>document.title = @json($seoTitle);</script>
+@endif

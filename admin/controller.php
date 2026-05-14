@@ -63,22 +63,43 @@ class seometaExtensionController extends Controller
         SeoSetting::set('enable_server_cards', $request->has('enable_server_cards') ? '1' : '0');
         SeoSetting::set('allow_google_indexing', $request->has('allow_google_indexing') ? '1' : '0');
 
-        // File uploads
+        // File uploads (file takes priority over URL)
         $dataDir = $this->getDataDir();
 
+        // OG Image
         if ($request->hasFile('og_image')) {
             $path = $this->handleUpload($request->file('og_image'), $dataDir, 'og_image');
             if ($path) SeoSetting::set('og_image', $path);
+        } elseif ($url = $request->input('og_image_url')) {
+            $url = trim($url);
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                $this->removeFile(SeoSetting::get('og_image'));
+                SeoSetting::set('og_image', $url);
+            }
         }
 
+        // Favicon
         if ($request->hasFile('favicon')) {
             $path = $this->handleUpload($request->file('favicon'), $dataDir, 'favicon');
             if ($path) SeoSetting::set('favicon', $path);
+        } elseif ($url = $request->input('favicon_url')) {
+            $url = trim($url);
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                $this->removeFile(SeoSetting::get('favicon'));
+                SeoSetting::set('favicon', $url);
+            }
         }
 
+        // Hosting Logo
         if ($request->hasFile('hosting_logo')) {
             $path = $this->handleUpload($request->file('hosting_logo'), $dataDir, 'hosting_logo');
             if ($path) SeoSetting::set('hosting_logo', $path);
+        } elseif ($url = $request->input('hosting_logo_url')) {
+            $url = trim($url);
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                $this->removeFile(SeoSetting::get('hosting_logo'));
+                SeoSetting::set('hosting_logo', $url);
+            }
         }
 
         // Handle remove image actions
