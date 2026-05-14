@@ -9,7 +9,7 @@
  */
 
 // Read .env for database credentials
-$envPath = __DIR__ . '/../../.env';
+$envPath = __DIR__ . '/../../../.env';
 if (!file_exists($envPath)) {
     http_response_code(500);
     exit('Config not found');
@@ -179,9 +179,12 @@ if ($fontBold) {
                 @file_put_contents($tmpLogo, @file_get_contents($hostingLogo));
                 if (filesize($tmpLogo) > 0) $logoFullPath = $tmpLogo;
             } else {
-                $logoFullPath = __DIR__ . '/../../public' . $hostingLogo;
+                // Logo path is like /extensions/seometa/logo.png (relative to public/)
+                // og.php is at /public/extensions/seometa/og.php
+                // So go up to public/ and append the path
+                $logoFullPath = __DIR__ . '/../..' . $hostingLogo;
                 if (!file_exists($logoFullPath)) {
-                    $logoFullPath = __DIR__ . '/../..' . $hostingLogo;
+                    $logoFullPath = __DIR__ . '/../../..' . $hostingLogo;
                 }
             }
 

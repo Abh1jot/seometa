@@ -188,7 +188,7 @@ class seometaExtensionController extends Controller
     {
         return <<<'OGPHP'
 <?php
-$envPath = __DIR__ . '/../../.env';
+$envPath = __DIR__ . '/../../../.env';
 if (!file_exists($envPath)) { http_response_code(500); exit; }
 $env = [];
 foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
@@ -225,7 +225,7 @@ if($fb){
     $fs=42;$bb=imagettfbbox($fs,0,$fb,$name);$tw=abs($bb[2]-$bb[0]);while($tw>$w-120&&$fs>20){$fs-=2;$bb=imagettfbbox($fs,0,$fb,$name);$tw=abs($bb[2]-$bb[0]);}
     $tx=($w-$tw)/2;$ty=$h/2+$fs/3;imagettftext($img,$fs,0,$tx+2,$ty+2,imagecolorallocatealpha($img,0,0,0,50),$fb,$name);imagettftext($img,$fs,0,$tx,$ty,$wh,$fb,$name);
     if($hn&&$fr){$hy=$h-30;$sx=30;
-        if($hl){$lp=str_starts_with($hl,'http')?$hl:(__DIR__.'/../..'.$hl);if(str_starts_with($hl,'http')){$tmp=tempnam(sys_get_temp_dir(),'l');@file_put_contents($tmp,@file_get_contents($hl));$lp=$tmp;}
+        if($hl){$lp=str_starts_with($hl,'http')?$hl:(__DIR__.'/../..'.$hl);if(str_starts_with($hl,'http')){$tmp=tempnam(sys_get_temp_dir(),'l');@file_put_contents($tmp,@file_get_contents($hl));$lp=$tmp;}if(!file_exists($lp)){$lp=__DIR__.'/../../..'.$hl;}
             if($lp&&file_exists($lp)){$li=@getimagesize($lp);if($li){$ls2=null;switch($li[2]){case 1:$ls2=@imagecreatefromgif($lp);break;case 2:$ls2=@imagecreatefromjpeg($lp);break;case 3:$ls2=@imagecreatefrompng($lp);break;case 18:$ls2=@imagecreatefromwebp($lp);break;}
 if($ls2){imagecopyresampled($img,$ls2,30,$hy-30,0,0,36,36,imagesx($ls2),imagesy($ls2));imagedestroy($ls2);$sx=76;}}}if(isset($tmp))@unlink($tmp);}
         imagettftext($img,16,0,$sx,$hy,$lg,$fr,$hn);}
