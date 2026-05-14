@@ -1,37 +1,33 @@
 <?php
 
+namespace Pterodactyl\Http\Controllers\Admin\Extensions\seometa;
+
+use Illuminate\Http\Request;
+use Pterodactyl\Http\Controllers\Controller;
 use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\Admin\BlueprintAdminLibrary as BlueprintExtensionLibrary;
 use Pterodactyl\BlueprintFramework\Extensions\seometa\Models\SeoSetting;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
-/**
- * SEO & Meta — Admin Controller
- * Handles settings management and image uploads.
- */
-return new class {
+class seometaExtensionController extends Controller
+{
+    private BlueprintExtensionLibrary $bp;
 
-    public function __construct(private BlueprintExtensionLibrary $blueprint) {}
+    public function __construct(BlueprintExtensionLibrary $bp)
+    {
+        $this->bp = $bp;
+    }
 
-    /**
-     * GET — Render the admin settings page.
-     */
-    public function index(): mixed
+    public function index(Request $request)
     {
         $settings = SeoSetting::allSettings();
-        $root = '/admin/extensions/seometa';
 
-        return $this->blueprint->view('index', [
-            'root'     => $root,
-            'blueprint' => $this->blueprint,
-            'settings' => $settings,
+        return view('admin.extensions.seometa.index', [
+            'root'      => '/admin/extensions/seometa',
+            'blueprint' => $this->bp,
+            'settings'  => $settings,
         ]);
     }
 
-    /**
-     * POST — Save settings and handle file uploads.
-     */
-    public function post(Request $request): mixed
+    public function post(Request $request)
     {
         $action = $request->input('action', 'save_settings');
 
@@ -42,20 +38,13 @@ return new class {
         return redirect('/admin/extensions/seometa')->with('error', 'Unknown action.');
     }
 
-    /**
-     * PATCH — AJAX endpoints (for future use).
-     */
-    public function update(Request $request): mixed
+    public function update(Request $request)
     {
         return response()->json(['status' => 'ok']);
     }
 
-    /**
-     * Save all SEO settings.
-     */
-    private function saveSettings(Request $request): mixed
+    private function saveSettings(Request $request)
     {
-        // Text fields
         $textFields = [
             'site_title',
             'site_description',
@@ -109,9 +98,6 @@ return new class {
         return redirect('/admin/extensions/seometa')->with('success', 'SEO settings saved successfully.');
     }
 
-    /**
-     * Handle file upload. Returns the public URL path or null.
-     */
     private function handleUpload($file, string $dataDir, string $prefix): ?string
     {
         if (!$file->isValid()) return null;
@@ -120,38 +106,26 @@ return new class {
         $ext = strtolower($file->getClientOriginalExtension());
         if (!in_array($ext, $allowed)) return null;
 
-        // Remove old file
         $oldPath = SeoSetting::get($prefix);
         if ($oldPath) $this->removeFile($oldPath);
 
         $filename = $prefix . '_' . time() . '.' . $ext;
         $file->move($dataDir, $filename);
 
-        // Return URL path relative to public
         return '/extensions/seometa/' . $filename;
     }
 
-    /**
-     * Get the data directory path.
-     */
     private function getDataDir(): string
     {
-        $dir = base_path('resources/views/blueprint/extensions/seometa/data');
-        if (!is_dir($dir)) {
-            // Try the public path
-            $dir = public_path('extensions/seometa');
-            if (!is_dir($dir)) @mkdir($dir, 0755, true);
-        }
+        $dir = public_path('extensions/seometa');
+        if (!is_dir($dir)) @mkdir($dir, 0755, true);
         return $dir;
     }
 
-    /**
-     * Remove a previously uploaded file.
-     */
     private function removeFile(?string $urlPath): void
     {
         if (!$urlPath) return;
         $fullPath = public_path($urlPath);
         if (file_exists($fullPath)) @unlink($fullPath);
     }
-};
+}
