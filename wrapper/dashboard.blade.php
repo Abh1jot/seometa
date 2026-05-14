@@ -15,7 +15,7 @@
     $seoIndexing    = SeoSetting::get('allow_google_indexing', '1');
     $seoCurrentUrl  = url()->current();
 
-    // Detect if we're on a server page and use dynamic OG image
+    // Detect if we're on a server page → use dynamic OG image
     $seoIsServerPage = false;
     $seoServerUuid   = null;
 
@@ -25,10 +25,10 @@
         $seoServerUuid   = $m[1];
     }
 
-    // Use dynamic server image if on a server page and enabled
+    // Use public og.php endpoint for server pages (no auth needed for crawlers)
     $seoFinalOgImage = $seoOgImage;
     if ($seoIsServerPage && $seoServerCards === '1' && $seoServerUuid) {
-        $seoFinalOgImage = '/api/client/extensions/seometa/og-image/' . $seoServerUuid;
+        $seoFinalOgImage = url('/extensions/seometa/og.php?id=' . $seoServerUuid);
     }
 
     // Build absolute URLs
@@ -42,10 +42,10 @@
 
 {{-- Server-rendered meta tags (visible to social crawlers) --}}
 @if($seoDescription)
-<meta name="description" content="{{ $seoDescription }}">
+<meta name="description" content="{{ e($seoDescription) }}">
 @endif
 @if($seoThemeColor)
-<meta name="theme-color" content="{{ $seoThemeColor }}">
+<meta name="theme-color" content="{{ e($seoThemeColor) }}">
 @endif
 @if($seoIndexing !== '1')
 <meta name="robots" content="noindex, nofollow">
@@ -53,39 +53,51 @@
 
 {{-- Open Graph --}}
 <meta property="og:type" content="website">
-<meta property="og:url" content="{{ $seoCurrentUrl }}">
+<meta property="og:url" content="{{ e($seoCurrentUrl) }}">
 @if($seoTitle)
-<meta property="og:title" content="{{ $seoTitle }}">
+<meta property="og:title" content="{{ e($seoTitle) }}">
 @endif
 @if($seoDescription)
-<meta property="og:description" content="{{ $seoDescription }}">
+<meta property="og:description" content="{{ e($seoDescription) }}">
 @endif
 @if($seoFinalOgImage)
 <meta property="og:image" content="{{ $seoFinalOgImage }}">
 @endif
 @if($seoHostName)
-<meta property="og:site_name" content="{{ $seoHostName }}">
+<meta property="og:site_name" content="{{ e($seoHostName) }}">
 @endif
 
 {{-- Twitter Card --}}
-<meta name="twitter:card" content="{{ $seoCardType }}">
+<meta name="twitter:card" content="{{ e($seoCardType) }}">
 @if($seoTitle)
-<meta name="twitter:title" content="{{ $seoTitle }}">
+<meta name="twitter:title" content="{{ e($seoTitle) }}">
 @endif
 @if($seoDescription)
-<meta name="twitter:description" content="{{ $seoDescription }}">
+<meta name="twitter:description" content="{{ e($seoDescription) }}">
 @endif
 @if($seoFinalOgImage)
 <meta name="twitter:image" content="{{ $seoFinalOgImage }}">
 @endif
 
-{{-- Favicon --}}
-@if($seoFavicon)
-<link rel="icon" href="{{ $seoFavicon }}">
-<link rel="shortcut icon" href="{{ $seoFavicon }}">
-@endif
+{{-- Favicon + Title (JS needed to override Pterodactyl's defaults) --}}
+<script>
+(function(){
+    @if($seoTitle)
+    document.title = @json($seoTitle);
+    @endif
 
-{{-- Page title (requires JS since Pterodactyl is a React SPA) --}}
-@if($seoTitle)
-<script>document.title = @json($seoTitle);</script>
-@endif
+    @if($seoFavicon)
+    // Remove all existing favicon links
+    document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]').forEach(function(el) { el.remove(); });
+    // Add new favicon
+    var fav = document.createElement('link');
+    fav.rel = 'icon';
+    fav.href = @json($seoFavicon);
+    document.head.appendChild(fav);
+    var fav2 = document.createElement('link');
+    fav2.rel = 'shortcut icon';
+    fav2.href = @json($seoFavicon);
+    document.head.appendChild(fav2);
+    @endif
+})();
+</script>
