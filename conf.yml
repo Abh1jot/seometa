@@ -1,0 +1,27 @@
+info:
+  name: 'SEO & Meta'
+  identifier: 'seometa'
+  description: 'Add SEO meta tags, Open Graph images, and dynamic server share cards to your Pterodactyl panel. Fully editable with live preview.'
+  version: '1.0.0'
+  target: 'beta-2026-01'
+  author: 'AzionCloud'
+  icon: 'icon.png'
+  website: 'https://azioncloud.com/discord'
+
+admin:
+  view: 'admin/view.blade.php'
+  controller: 'admin/controller.php'
+
+dashboard:
+  wrapper: 'wrapper/dashboard.blade.php'
+
+data:
+  directory: 'data'
+
+requests:
+  app: 'app'
+  routers:
+    client: 'routes/client.php'
+
+database:
+  migrations: 'migrations'
