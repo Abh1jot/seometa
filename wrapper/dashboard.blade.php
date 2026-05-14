@@ -12,6 +12,7 @@
     $seoCardType    = SeoSetting::get('twitter_card_type', 'summary_large_image');
     $seoHostName    = SeoSetting::get('hosting_name', '');
     $seoServerCards = SeoSetting::get('enable_server_cards', '1');
+    $seoIndexing    = SeoSetting::get('allow_google_indexing', '1');
     $seoCurrentUrl  = url()->current();
 
     // Detect if we're on a server page and use dynamic OG image
@@ -115,6 +116,11 @@
     // Theme color
     @if($seoThemeColor)
         setMeta('theme-color', @json($seoThemeColor), true);
+    @endif
+
+    // Robots (noindex)
+    @if($seoIndexing !== '1')
+        setMeta('robots', 'noindex, nofollow', true);
     @endif
 
     // Favicon

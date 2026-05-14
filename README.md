@@ -11,6 +11,12 @@ Add SEO meta tags, Open Graph images, and dynamic server share cards to your Pte
 - **Twitter Card** — Choose between large image or summary card types
 - **Favicon** — Upload a custom browser tab icon
 
+### Search Engine Indexing Control
+- **Google Indexing Toggle** — Enable or disable search engine indexing with one click
+- When disabled, adds `noindex, nofollow` robots meta tag to prevent Google from indexing your panel
+- Perfect for private or internal panels that shouldn't appear in search results
+- Live preview shows a **NOINDEX** badge and dims the Google preview when disabled
+
 ### Dynamic Server Share Cards
 When a user shares a server link from your panel on Discord, Twitter, or Facebook:
 - A **custom image** is generated dynamically using PHP GD
@@ -20,7 +26,7 @@ When a user shares a server link from your panel on Discord, Twitter, or Faceboo
 - Fully branded — your hosting identity on every share
 
 ### Live Preview
-- **Google Search** preview — see exactly how your panel appears in search results
+- **Google Search** preview — see exactly how your panel appears in search results (with NOINDEX indicator)
 - **Discord Embed** preview — live preview of the Discord embed card
 - **Twitter/X Card** preview — see the Twitter card in real-time
 - **Server Share Card** preview — preview the dynamic server image

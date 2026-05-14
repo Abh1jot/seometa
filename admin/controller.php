@@ -72,6 +72,7 @@ return new class {
 
         // Toggle fields
         SeoSetting::set('enable_server_cards', $request->has('enable_server_cards') ? '1' : '0');
+        SeoSetting::set('allow_google_indexing', $request->has('allow_google_indexing') ? '1' : '0');
 
         // File uploads
         $dataDir = $this->getDataDir();

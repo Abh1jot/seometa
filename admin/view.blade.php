@@ -75,6 +75,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group" style="margin-top:15px;padding-top:15px;border-top:1px solid #333;">
+                        <label>
+                            <input type="checkbox" name="allow_google_indexing" value="1" id="inp-indexing"
+                                   {{ ($settings['allow_google_indexing'] ?? '1') === '1' ? 'checked' : '' }}
+                                   onchange="updatePreview()">
+                            Allow Google & Search Engine Indexing
+                        </label>
+                        <p class="help-block">When disabled, a <code>noindex, nofollow</code> robots meta tag is added to prevent search engines from indexing your panel. Useful for private or internal panels.</p>
+                    </div>
                 </div>
             </div>
 
@@ -181,7 +190,8 @@
                     {{-- Google Search Preview --}}
                     <div style="margin-bottom:25px;">
                         <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:8px;font-weight:600;">Google Search</div>
-                        <div style="background:#1a1a2e;border-radius:10px;padding:16px;border:1px solid #2a2a4a;">
+                        <div id="preview-google-box" style="background:#1a1a2e;border-radius:10px;padding:16px;border:1px solid #2a2a4a;position:relative;">
+                            <div id="preview-noindex-badge" style="display:{{ ($settings['allow_google_indexing'] ?? '1') === '1' ? 'none' : 'block' }};position:absolute;top:10px;right:10px;background:#e74c3c;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.5px;">NOINDEX</div>
                             <div id="preview-google-url" style="color:#8ab4f8;font-size:12px;margin-bottom:4px;">{{ request()->getHost() }}</div>
                             <div id="preview-google-title" style="color:#8ab4f8;font-size:17px;font-weight:400;line-height:1.3;margin-bottom:6px;">{{ $settings['site_title'] ?: 'Your Panel Title' }}</div>
                             <div id="preview-google-desc" style="color:#bdc1c6;font-size:13px;line-height:1.5;">{{ Str::limit($settings['site_description'] ?: 'Your panel description will appear here...', 160) }}</div>
@@ -324,6 +334,11 @@ function updatePreview() {
     document.getElementById('preview-server-host-name').textContent = hostName;
     document.getElementById('preview-server-brand').textContent = hostName;
     document.getElementById('preview-server-card').style.borderLeftColor = color;
+
+    // Google indexing badge
+    var indexing = document.getElementById('inp-indexing').checked;
+    document.getElementById('preview-noindex-badge').style.display = indexing ? 'none' : 'block';
+    document.getElementById('preview-google-box').style.opacity = indexing ? '1' : '0.5';
 }
 
 function previewUpload(input, targetId) {

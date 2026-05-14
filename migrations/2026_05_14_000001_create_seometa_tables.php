@@ -27,6 +27,7 @@ return new class extends Migration
             'hosting_name'         => '',
             'hosting_logo'         => '',
             'enable_server_cards'  => '1',
+            'allow_google_indexing' => '1',
         ];
 
         foreach ($defaults as $key => $value) {
